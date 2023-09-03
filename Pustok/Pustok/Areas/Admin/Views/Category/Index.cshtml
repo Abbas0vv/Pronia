@@ -1,58 +1,173 @@
-﻿@model List<CategoryListItemViewModel>
-<div class="row">
-    <div class="col-sm-12">
-        <div class="page-title-box">
-            <h4 class="page-title">Categories</h4>
+﻿
+ @model List<CategoryListItemViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Category List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-title-box">
+                    <h4 class="page-title">Categories</h4>
+                </div>
+            </div>
         </div>
-        <!--end page-title-box-->
-    </div>
-    <!--end col-->
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <div class="row justify-content-between">
-                    <div class="col-2">
-                        <a asp-controller="category" asp-action="add" type="button" class="btn btn-primary">
-                            + New category
-                        </a>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row justify-content-between">
+                            <div class="col-3">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
+                                    +Add New Category
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="categories-table" class="table table-striped mb-0 ">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int rowCounter = 1;
+                                    }
+                                    @foreach (var category in Model)
+                                    {
+                                        <tr>
+                                            <td>@(rowCounter++)</td>
+                                            <td>@category.Name</td>
+                                            <td>@category.CategoryDescription</td>
+                                            <td>
+                                                <a asp-controller="category" asp-action="update" asp-route-id="@category.Id" class="mr-2"><i class="las la-pen text-secondary font-18"></i></a>
+
+                                                <button onclick="return confirm('Are you sure to delete?')" class="mr-2" form="remove-form-@category.Id"><i class="las la-trash-alt text-danger font-22"></i></button>
+                                                <form asp-controller="category" asp-action="delete" asp-route-id="@category.Id" method="POST" class="d-none" id="remove-form-@category.Id">
+                                                    <input type="hidden" name="id" value="@category.Id">
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="categories-table" class="table table-striped mb-0 ">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int rowCounter = 1;
-                            }
-                            @foreach (var category in Model)
-                            {
-                                <tr>
-                                    <td>@(rowCounter++)</td>
-                                    <td>@category.Name</td>
-                                    <td>
-                                        <a asp-controller="category" asp-action="update" asp-route-id="@category.Id" class="mr-2"><i class="las la-pen text-secondary font-18"></i></a>
+        </div>
 
-                                        <button onclick="return confirm('Are you sure to delete?')" class="mr-2" form="remove-form-@category.Id"><i class="las la-trash-alt text-danger font-22"></i></button>
-                                        <form asp-controller="category" asp-action="delete" asp-route-id="@category.Id" method="POST" class="d-none" id="remove-form-@category.Id">
-                                            <input type="hidden" name="id" value="@category.Id">
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div><!--end /tableresponsive-->
-            </div><!--end card-body-->
-        </div><!--end card-->
-    </div> <!-- end col -->
-</div>
+        <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryModalLabel">New Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="categoryForm">
+                            
+                            <div class="form-group">
+                                <label for="categoryName">Category Name:</label>
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Please enter category name" required>
+                                <span name="categoryName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoryDescription">Category Description:</label>
+                                <textarea class="form-control" id="categoryDescription" name="categoryDescription" placeholder="Please enter category description" required></textarea>
+                                <span name="categoryDescription" class="text-danger"></span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveCategory">Save</button>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+           
+        
+    </div>
+        
+    <script>
+        $(document).ready(function () {
+            $("#saveCategory").on("click", function () {
+                var categoryName = $("#categoryName").val();
+                var categoryDescription = $("#categoryDescription").val();
+
+                $.ajax({
+                    url: "/category/add", 
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        Name: categoryName,
+                        CategoryDescription: categoryDescription
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                           
+                            $("#categoryName").val("");
+                            $("#categoryDescription").val("");
+
+                            
+                            $("#addCategoryModal").modal("hide");
+
+                           
+                            var newRow = "<tr>" +
+                                "<td>" + response.id + "</td>" +
+                                "<td>" + response.name + "</td>" +
+                                "<td>" + response.description + "</td>" +
+                                "<td>" +
+                                "<a asp-controller='category' asp-action='update' asp-route-id='" + response.id + "' class='mr-2'><i class='las la-pen text-secondary font-18'></i></a>" +
+                                "<button onclick=\"return confirm('Are you sure to delete?')\" class='mr-2' form='remove-form-" + response.id + "'><i class='las la-trash-alt text-danger font-22'></i></button>" +
+                                "<form asp-controller='category' asp-action='delete' asp-route-id='" + response.id + "' method='POST' class='d-none' id='remove-form-" + response.id + "'>" +
+                                "<input type='hidden' name='id' value='" + response.id + "'>" +
+                                "</form>" +
+                                "</td>" +
+                                "</tr>";
+                            $("#categories-table tbody").append(newRow);
+                            alert("Message: " + response.message)
+                        } else {
+                            
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function (response) {
+                        
+                       
+                        alert(response.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+    
+   
+
+
+</body>
+</html>
