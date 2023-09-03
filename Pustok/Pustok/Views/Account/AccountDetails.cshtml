@@ -1,0 +1,62 @@
+﻿ <!-- Begin Main Content Area -->
+<main class="main-content">
+     @Html.Partial(
+    "Partials/_BreadcrumbPartial",
+    new BreadcrumbViewModel("account details page", "account details"));
+
+    <div class="account-page-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <partial name="Partials/_SidebarMenuPartial" />
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="myaccount-details">
+                        <form action="#" class="myaccount-form">
+                            <div class="myaccount-form-inner">
+                                <div class="single-input single-input-half">
+                                    <label>First Name*</label>
+                                    <input type="text" />
+                                </div>
+                                <div class="single-input single-input-half">
+                                    <label>Last Name*</label>
+                                    <input type="text" />
+                                </div>
+                                <div class="single-input">
+                                    <label>Email*</label>
+                                    <input type="email" />
+                                </div>
+                                <div class="single-input">
+                                    <label>
+                                        Current Password(leave blank to leave
+                                        unchanged)
+                                    </label>
+                                    <input type="password" />
+                                </div>
+                                <div class="single-input">
+                                    <label>
+                                        New Password (leave blank to leave
+                                        unchanged)
+                                    </label>
+                                    <input type="password" />
+                                </div>
+                                <div class="single-input">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" />
+                                </div>
+                                <div class="single-input">
+                                    <button class="btn btn-custom-size lg-size btn-pronia-primary"
+                                            type="submit">
+                                        <span>SAVE CHANGES</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Main Content Area End Here -->
