@@ -1,40 +1,62 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pustok.Database;
 using Pustok.Database.Models;
+using Pustok.Services.Abstracts;
+using Pustok.ViewModels;
 
 namespace Pustok.Controllers;
 
 [Route("basket")]
+[Authorize]
 public class BasketController : Controller
 {
     private readonly PustokDbContext _dbContext;
+    private readonly IUserService _userService;
 
-    public BasketController(PustokDbContext dbContext)
+    public BasketController(PustokDbContext dbContext, IUserService userService)
     {
         _dbContext = dbContext;
+        _userService = userService;
     }
 
     [HttpPost("add-product/{productId}")]
-    public IActionResult AddProduct(int productId)
+    public IActionResult AddProduct(AddProductToBasketViewModel model)
     {
-        var product = _dbContext.Products.SingleOrDefault(p => p.Id == productId);
+        var product = _dbContext.Products.SingleOrDefault(p => p.Id == model.ProductId);
         if (product == null)
         {
             return NotFound();
         }
 
-        //TODO : We will provide user id in future lessons
-        var basket = _dbContext.Baskets.SingleOrDefault();
+        var basket = _dbContext.Baskets.SingleOrDefault(b => b.UserId == _userService.CurrentUser.Id);
         if (basket == null)
         {
-            basket = new Basket();
+            basket = new Basket
+            {
+                UserId = _userService.CurrentUser.Id
+            };
+
             _dbContext.Baskets.Add(basket);
         }
 
         var productColor = _dbContext.ProductColors
-            .First(pc => pc.ProductId == product.Id);
+            .FirstOrDefault(pc =>
+                pc.ProductId == product.Id
+                && (model.ColorId != null ? pc.ColorId == model.ColorId : true));
+        if (productColor == null)
+        {
+            return NotFound();
+        }
+
         var productSize = _dbContext.ProductSizes
-            .First(ps => ps.ProductId == product.Id);
+            .FirstOrDefault(ps =>
+                ps.ProductId == product.Id &&
+                model.SizeId != null ? ps.SizeId == model.SizeId : true);
+        if (productSize == null)
+        {
+            return NotFound();
+        }
 
         var basketItem = _dbContext.BasketItems.SingleOrDefault(bi =>
             bi.Basket == basket &&

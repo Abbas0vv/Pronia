@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Pustok.Database;
 using Pustok.Services.Abstracts;
@@ -17,17 +18,30 @@ public class Program
             .AddRazorRuntimeCompilation();
 
         builder.Services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(o =>
+            {
+                o.Cookie.Name = "CeyhunIdentity";
+                o.LoginPath = "/auth/login";
+            });
+
+        builder.Services
             .AddDbContext<PustokDbContext>(o =>
             {
                 o.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
             })
+            .AddScoped<IUserService, UserService>()
             .AddSingleton<IFileService, ServerFileService>()
-            .AddScoped<IEmailService, MailkitEmailService>();
+            .AddScoped<IEmailService, MailkitEmailService>()
+            .AddHttpContextAccessor();
 
         var app = builder.Build();
 
         //Middleware (Chain of responsibily)
         app.UseStaticFiles();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllerRoute("default", "{controller=Home}/{action=Index}");
 

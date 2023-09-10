@@ -36,6 +36,20 @@ public class PustokDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        #region User
+
+        modelBuilder
+            .Entity<User>()
+            .ToTable("Users");
+
+        modelBuilder
+            .Entity<User>()
+            .HasOne<Basket>(u => u.Basket)
+            .WithOne(b => b.User)
+            .HasForeignKey<Basket>(b => b.UserId);
+
+        #endregion
+
         #region Category product
 
         //FLUENT API
@@ -301,5 +315,6 @@ public class PustokDbContext : DbContext
     public DbSet<ProductSize> ProductSizes { get; set; }
     public DbSet<Basket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
+    public DbSet<User> Users { get; set; }
 
 }

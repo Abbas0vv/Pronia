@@ -46,45 +46,22 @@ public class CategoryController : Controller
         return View();
     }
 
-    [HttpPost("/category/add")]
-    public async Task<IActionResult> AddCategoryAsync(CategoryAddViewModel model)
+    [HttpPost("add")]
+    public IActionResult Add(CategoryAddViewModel model)
     {
-        try
+        if (!ModelState.IsValid)
+            return View();
+
+        var category = new Category
         {
-            if (!ModelState.IsValid)
-                return Json(new { success = false, message = "Validation failed!Please enter valid parametrs..." });
+            Name = model.Name,
+        };
 
-            var category = new Category
-            {
-                Name = model.Name,
-                Description = model.CategoryDescription
-               
-            };
+        _dbContext.Categories.Add(category);
+        _dbContext.SaveChanges();
 
-            _dbContext.Categories.Add(category);
-            await _dbContext.SaveChangesAsync();
-
-
-            var response = new
-            {
-                success = true,
-                message = "Category successfully added to table...",
-                id = category.Id,
-                name = category.Name,
-                description = category.Description
-            };
-           
-            return Created("api/categories/" + category.Id, response);
-
-        }
-        catch (Exception ex)
-        {
-          
-            return Json(new { success = false, message = "An error occurred while adding the category. Mistake:" + ex.Message });
-        }
-        
+        return RedirectToAction(nameof(Index));
     }
-
 
     #endregion
 

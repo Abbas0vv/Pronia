@@ -1940,6 +1940,7 @@
     </div>
 </div>
 <!-- Blog Area End Here -->
+
 <!-- Begin Modal Area -->
 <div class="modal quick-view-modal fade" id="quickModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="quickModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1998,11 +1999,11 @@
                             <ul class="quantity-with-btn">
                                 <li class="quantity">
                                     <div class="cart-plus-minus">
-                                        <input class="cart-plus-minus-box" value="1" type="text" />
+                                        <input class="cart-plus-minus-box product-details-quantity" value="1" type="text" />
                                     </div>
                                 </li>
                                 <li class="add-to-cart">
-                                    <a class="btn btn-custom-size lg-size btn-pronia-primary"
+                                    <a class="btn btn-custom-size lg-size btn-pronia-primary product-add-to-cart-button-with-details"
                                        href="cart.html">Add to cart</a>
                                 </li>
                                 <li class="wishlist-btn-wrap">
@@ -2062,7 +2063,8 @@
     </div>
 </div>
 <!-- Modal Area End Here -->
+
 @section custom_scripts
-    {
-    <script src="~/client/assets/js/pages/basket-management.js"></script>
+{
+    <script src="~/client/assets/js/pages/basket-management.js" asp-append-version="true" ></script>
 }

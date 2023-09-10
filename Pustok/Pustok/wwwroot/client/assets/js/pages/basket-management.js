@@ -7,23 +7,44 @@ function add_to_cart(productId) {
     });
 }
 
+function add_to_cart_with_details(productId) {
+    let url = `basket/add-product/${productId}`
+    let modalElement = $("#quickModal");
+
+    let colorsElement = modalElement.find(".product-details-colors");
+    let sizesElement = modalElement.find(".product-details-sizes");
+    let quantityElement = modalElement.find(".product-details-quantity");
+
+    var requestData = {
+        ColorId: colorsElement.val(),
+        SizeId: sizesElement.val(),
+        Quantity: quantityElement.val()
+    };
+
+    $.post(url, requestData, function (responseData) {
+        modalElement.modal('hide');
+    });
+}
+
 function view_details(productId) {
     let url = `products/${productId}/details`
 
     $.get(url, function (data) {
         let modalElement = $("#quickModal");
-        console.log(data);
         let nameElement = modalElement.find(".product-details-name");
         let descriptionElement = modalElement.find(".product-details-description");
         let imageElement = modalElement.find(".product-details-image");
         let colorsElement = modalElement.find(".product-details-colors");
         let sizesElement = modalElement.find(".product-details-sizes");
+        let addToCartElement = modalElement.find(".product-add-to-cart-button-with-details");
 
         set_name(nameElement, data);
         set_description(descriptionElement, data);
         set_image(imageElement, data)
         set_colors(colorsElement, data)
         set_sizes(sizesElement, data)
+
+        set_add_to_cart_button(addToCartElement, data);
 
         modalElement.modal('show');
     });
@@ -59,6 +80,10 @@ function set_sizes(element, data) {
             text: sizeItem["name"]
         }));
     });
+}
+
+function set_add_to_cart_button(element, data) {
+    element.attr("onclick", `event.preventDefault();add_to_cart_with_details(${data.productId});`)
 }
 
 
